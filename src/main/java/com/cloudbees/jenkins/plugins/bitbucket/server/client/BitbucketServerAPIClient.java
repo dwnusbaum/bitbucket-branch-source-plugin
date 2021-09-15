@@ -852,7 +852,7 @@ public class BitbucketServerAPIClient implements BitbucketApi {
             authenticator.configureRequest(httpget);
         }
 
-        try (CloseableHttpResponse response = executeMethod(httpget, context)) {
+        try (CloseableHttpResponse response = executeMethod(httpget)) {
             String content;
             long len = response.getEntity().getContentLength();
             if (len == 0) {
@@ -894,7 +894,7 @@ public class BitbucketServerAPIClient implements BitbucketApi {
             authenticator.configureRequest(httpget);
         }
 
-        try (CloseableHttpResponse response = executeMethod(httpget, context)) {
+        try (CloseableHttpResponse response = executeMethod(httpget)) {
             BufferedImage content;
             long len = response.getEntity().getContentLength();
             if (len == 0) {
@@ -1003,7 +1003,7 @@ public class BitbucketServerAPIClient implements BitbucketApi {
             authenticator.configureRequest(httpget);
         }
 
-        try(CloseableHttpResponse response = executeMethod(httpget, context)) {
+        try(CloseableHttpResponse response = executeMethod(httpget)) {
             EntityUtils.consume(response.getEntity());
             return response.getStatusLine().getStatusCode();
         } finally {
@@ -1047,7 +1047,7 @@ public class BitbucketServerAPIClient implements BitbucketApi {
             authenticator.configureRequest(request);
         }
 
-        try (CloseableHttpResponse response = executeMethod(request, context)) {
+        try (CloseableHttpResponse response = executeMethod(request)) {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
                 EntityUtils.consume(response.getEntity());
                 // 204, no content
@@ -1192,10 +1192,10 @@ public class BitbucketServerAPIClient implements BitbucketApi {
     }
 
     @Restricted(ProtectedExternally.class)
-    protected CloseableHttpResponse executeMethod(HttpRequestBase httpMethod, HttpClientContext requestContext)
+    protected CloseableHttpResponse executeMethod(HttpRequestBase httpMethod)
             throws IOException {
         CloseableHttpClient client = getHttpClient(httpMethod);
-        CloseableHttpResponse response = client.execute(httpMethod, requestContext);
+        CloseableHttpResponse response = client.execute(httpMethod, context);
         while (response.getStatusLine().getStatusCode() == TOO_MANY_REQUESTS_HTTP_STATUS) {
             response.close();
             httpMethod.releaseConnection();
@@ -1212,7 +1212,7 @@ public class BitbucketServerAPIClient implements BitbucketApi {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            response = client.execute(httpMethod, requestContext);
+            response = client.execute(httpMethod, context);
         }
         return response;
     }
